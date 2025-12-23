@@ -1,0 +1,142 @@
+Actúa como un Senior Full-Stack Engineer + UI/UX Designer (nivel Apple minimalista) y construye una tienda SaaS llamada “Bordados Premium” para vender matrices de bordado digital.
+
+OBJETIVO
+Quiero un proyecto Next.js 14 (App Router) profesional, elegante, moderno, rápido y con identidad visual: minimalismo premium + “oro suave” como acento. Todo debe verse consistente (navbar, páginas, cards, botones, inputs, layout). Quiero diseño tipo Apple: mucho aire, tipografía limpia, sombras suaves, bordes sutiles, micro-interacciones, glass blur donde aporte. Responsivo desde móvil.
+
+STACK OBLIGATORIO
+- Next.js 14 + App Router
+- TypeScript
+- Tailwind CSS
+- Prisma + PostgreSQL
+- NextAuth (Credentials)
+- Sin librerías UI pesadas. (Puedes usar lucide-react si quieres íconos).
+- No usar shadcn si no es necesario.
+- Todo el estilo debe ser Tailwind + CSS propio en /app/(storefront)/storefront.css y /app/globals.css
+- Debe compilar sin errores en Replit.
+
+ARQUITECTURA DE RUTAS (APP ROUTER)
+- /app/(storefront)/layout.tsx => Layout de tienda con Navbar + Footer
+- /app/page.tsx => Home con Hero premium + featured + categorías
+- /app/shop/page.tsx => Catálogo con filtros por query string, orden, paginación, search
+- /app/shop/[slug]/page.tsx => Detalle producto (básico, pero bonito)
+- /app/login/page.tsx => Login premium
+- /app/cart/page.tsx => Carrito (mock UI si falta lógica)
+- /app/account/page.tsx => Mi cuenta (mock UI)
+- /app/custom/page.tsx => Form “A pedido” (mock UI)
+- /app/help/page.tsx => Centro de ayuda (mock UI)
+
+DISEÑO / MARCA
+Crear “marca” visual y consistencia:
+- Paleta:
+  - Base: #0B0F17 (negro azul profundo)
+  - Fondo: #F7F7F8 (gris muy claro)
+  - Oro suave (accent): #B08D57 (o similar)
+  - Texto secundario: gris
+- Tipografía: Inter (Google font) y un heading elegante opcional (pero sin exagerar).
+- Estilo Apple: bordes 1px sutiles, glass blur suave, sombras pequeñas.
+- Navbar debe priorizar LOGO (SVG) y verse grande/proporcional sin apretar elementos.
+- Logo: usar SVG desde /public/images/logo.svg (si existe) y mostrarlo “limpio” sin caja alrededor.
+- Navbar incluye buscador que redirige a /shop?search=...
+- Atajo Ctrl/Cmd + K para focus en input buscador.
+- Diseño debe ser consistente en todas las páginas.
+
+COMPONENTES REQUERIDOS
+1) Navbar: responsive, desktop con nav centrado + buscador, mobile drawer.
+2) Footer: premium minimal, con links y “oro suave” en detalles.
+3) ProductCard:
+   - Imagen
+   - Badge de Tier (STANDARD/PRO/PREMIUM)
+   - Badge “Nuevo” si isNew
+   - Badge “Bestseller” si bestseller
+   - Rating mock (ej: 4.7) + estrellas
+   - Contador formatos: “Formato: JEF/DST/PES…” (desde variants)
+   - Precio desde (min price CLP)
+   - Hover premium con transición
+4) Skeleton Loading:
+   - Cuando cargue lista de productos, mostrar skeleton cards.
+   - Usar suspense + loading.tsx en /app/shop/loading.tsx y si quieres también en /app/page.tsx.
+5) AddToCartButton:
+   - Diseño premium, micro feedback: loading + toast inline elegante
+   - Sin alert(), sin feo.
+6) Formularios: inputs y selects con estilo consistente.
+
+IMPORTANTE: SERVER vs CLIENT (NO ERRORES)
+- /app/shop/page.tsx debe ser SERVER COMPONENT (async) y NO debe tener onChange ni handlers.
+- La parte interactiva de filtros (selects/search) debe ser un CLIENT COMPONENT separado:
+  - /components/storefront/ShopFilters.client.tsx
+  - Este componente lee y escribe query params con useRouter/useSearchParams.
+  - Para cambios, debe hacer router.push() con los params.
+- En server page solo renderiza <ShopFilters ...props> como componente client con props serializables.
+- Evitar el error: “Event handlers cannot be passed to Client Component props”.
+
+TAILWIND / CSS
+- Configurar Tailwind correctamente.
+- Corregir globals.css para no usar border-border ni bg-background si no existe.
+- Crear clases utilitarias en /app/(storefront)/storefront.css:
+  - .card, .badge, .btn-primary, .btn-ghost, .input, .select, etc.
+- IMPORTS:
+  - globals.css se importa SOLO en /app/layout.tsx (root), no en layouts internos.
+  - storefront.css se importa en /app/(storefront)/layout.tsx
+
+PRISMA SCHEMA (DEBE VALIDAR)
+- Arreglar schema.prisma para que compile y migre.
+- Permitir campos en Product: isNew Boolean, bestseller Boolean, featured Boolean, active Boolean.
+- ProductVariant: format como enum EmbFormat (JEF/DST/PES etc)
+- Cart + CartItem incluidos (1 cart por user)
+- DownloadToken + DownloadTokenItem + logs
+- Evitar texto suelto al final del schema (NO dejar “isNew Boolean…” fuera de modelos).
+- No usar comentarios que rompan Prisma: usar // o /* */ válidos, pero sin líneas sueltas que Prisma interprete mal.
+- Entregar scripts claros para migrar:
+  - npx prisma migrate dev
+  - npx prisma generate
+
+SEED DATA
+- Crear prisma/seed.ts para insertar:
+  - 4 categorías
+  - 10 productos con imageUrl (placeholder seguro tipo /images/sample-1.jpg)
+  - variants con formatos JEF/DST/PES y distintos precios
+  - algunos productos con isNew/bestseller/featured para probar
+- Agregar script "prisma:seed" en package.json.
+
+FUNCIONALIDADES CATÁLOGO
+- /shop soporta query params:
+  - search=texto
+  - category=slug
+  - sort=featured|new|bestseller|price_asc|price_desc
+  - page=1..n
+- Mostrar contador total resultados.
+- Orden:
+  - featured desc, bestseller desc, isNew desc, createdAt desc (si sort=featured)
+- Si no hay resultados, mostrar empty state premium con botón “Limpiar filtros”.
+
+LOGIN UI
+- /login debe verse premium centrado.
+- Card glass + sombra suave + oro suave en detalles.
+- Mostrar credenciales demo en bloque elegante.
+
+ERRORES A EVITAR
+- No importar "./globals.css" desde /app/shop/layout.tsx (eso rompe ruta).
+- No usar onChange dentro de Server Component.
+- No usar clases Tailwind inexistentes (border-border, bg-background, etc).
+- No dejar CSS con // comentarios (usar /* */).
+- No dejar Prisma schema con líneas sueltas fuera de model/enum.
+
+ENTREGABLE
+Genera todos los archivos necesarios con su contenido completo, organizados por rutas.
+Incluye instrucciones paso a paso al final para correr:
+1) npm install
+2) configurar DATABASE_URL
+3) prisma migrate + seed
+4) npm run dev
+
+IMPORTANTE
+Si un archivo ya existe en el proyecto, indícame el diff o el reemplazo completo del archivo, pero siempre entrega el contenido final listo para pegar.
+
+Comienza por:
+- tailwind config
+- prisma schema + seed
+- layouts (root + storefront)
+- navbar/footer/components
+- shop (server + client filters + loading)
+- home + login
+Y asegura que la app compile sin errores.
