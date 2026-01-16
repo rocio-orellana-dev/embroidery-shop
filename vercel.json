@@ -9,7 +9,11 @@
   "routes": [
     {
       "src": "/assets/(.*)",
-      "dest": "/client/dist/assets/$1"
+      "dest": "/dist/public/assets/$1"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "server/index.ts"
     },
     {
       "src": "/(.*)",
