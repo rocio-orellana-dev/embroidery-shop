@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api, buildUrl } from "@shared/routes";
-import { type CartItemWithDetails } from "@shared/schema";
+import { type CartItemWithDetails, type AddToCartRequest } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 
 export function useCart() {
@@ -8,9 +8,9 @@ export function useCart() {
     queryKey: [api.cart.get.path],
     queryFn: async () => {
       const res = await fetch(api.cart.get.path, { credentials: "include" });
-      if (res.status === 401) return null; // Not logged in
-      if (!res.ok) throw new Error("Failed to fetch cart");
-      
+      if (res.status === 401) return null; // No ha iniciado sesión
+      if (!res.ok) throw new Error("Error al obtener el carrito");
+
       const data = await res.json();
       return api.cart.get.responses[200].parse(data) as CartItemWithDetails[];
     },
@@ -23,24 +23,29 @@ export function useAddToCart() {
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async ({ productId, quantity }: { productId: number; quantity?: number }) => {
+    // ✅ Ahora acepta format
+    mutationFn: async ({ productId, quantity, format }: AddToCartRequest) => {
       const res = await fetch(api.cart.addItem.path, {
         method: api.cart.addItem.method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId, quantity }),
+        body: JSON.stringify({
+          productId,
+          quantity: quantity ?? 1,
+          format, // ✅ importante
+        }),
         credentials: "include",
       });
 
-      if (res.status === 401) throw new Error("Please login to add items to cart");
-      if (!res.ok) throw new Error("Failed to add to cart");
+      if (res.status === 401) throw new Error("Por favor, inicia sesión para añadir productos");
+      if (!res.ok) throw new Error("Error al añadir al carrito");
 
       return api.cart.addItem.responses[200].parse(await res.json());
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [api.cart.get.path] });
       toast({
-        title: "Added to cart",
-        description: "Item has been added to your shopping bag.",
+        title: "Añadido al carrito",
+        description: "El artículo ha sido añadido a tu bolsa de compras.",
       });
     },
     onError: (error: Error) => {
@@ -65,13 +70,13 @@ export function useRemoveFromCart() {
         credentials: "include",
       });
 
-      if (!res.ok) throw new Error("Failed to remove item");
+      if (!res.ok) throw new Error("Error al eliminar el artículo");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [api.cart.get.path] });
       toast({
-        title: "Item removed",
-        description: "Item removed from your cart.",
+        title: "Artículo eliminado",
+        description: "El artículo ha sido quitado de tu carrito.",
       });
     },
   });

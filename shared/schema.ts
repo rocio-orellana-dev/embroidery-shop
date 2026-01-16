@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -17,7 +17,7 @@ export const products = pgTable("products", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   description: text("description").notNull(),
-  price: integer("price").notNull(), // Stored in lowest currency unit
+  price: integer("price").notNull(),
   tier: text("tier").notNull(), // STANDARD, PRO, PREMIUM
   category: text("category").notNull(),
   imageUrl: text("image_url").notNull(),
@@ -36,8 +36,9 @@ export const productFormats = pgTable("product_formats", {
 
 export const cartItems = pgTable("cart_items", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull(), // Linked to registered user
+  userId: integer("user_id").notNull(),
   productId: integer("product_id").notNull(),
+  format: text("format").notNull().default("JEF"), // ✅ NUEVO
   quantity: integer("quantity").default(1),
   addedAt: timestamp("added_at").defaultNow(),
 });
@@ -73,9 +74,9 @@ export const insertUserSchema = createInsertSchema(users).pick({
   password: true,
 });
 
-export const insertProductSchema = createInsertSchema(products).omit({ 
-  id: true, 
-  createdAt: true 
+export const insertProductSchema = createInsertSchema(products).omit({
+  id: true,
+  createdAt: true,
 });
 
 export const insertCartItemSchema = createInsertSchema(cartItems).omit({
@@ -83,7 +84,7 @@ export const insertCartItemSchema = createInsertSchema(cartItems).omit({
   addedAt: true,
 });
 
-// === EXPLICIT API CONTRACT TYPES ===
+// === TYPES ===
 
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -95,7 +96,6 @@ export type InsertProduct = z.infer<typeof insertProductSchema>;
 export type CartItem = typeof cartItems.$inferSelect;
 export type InsertCartItem = z.infer<typeof insertCartItemSchema>;
 
-// Complex types for frontend
 export type ProductWithFormats = Product & { formats: string[] };
 
 export type ProductListResponse = ProductWithFormats[];
@@ -104,4 +104,5 @@ export type ProductResponse = ProductWithFormats;
 export type CartItemWithDetails = CartItem & { product: Product };
 export type CartResponse = CartItemWithDetails[];
 
-export type AddToCartRequest = { productId: number; quantity?: number };
+// ✅ AHORA incluye format
+export type AddToCartRequest = { productId: number; quantity?: number; format: string };

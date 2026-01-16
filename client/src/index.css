@@ -89,3 +89,131 @@
     @apply bg-black/40 backdrop-blur-md border border-white/10 shadow-sm;
   }
 }
+.wmPreview {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.wmPreview img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.wmOverlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 12px;
+  mix-blend-mode: multiply;
+}
+
+.wmCaption {
+  margin-top: 8px;
+  font-size: 12px;
+  opacity: 0.75;
+  text-align: center;
+}
+
+/* === Watermark (Opción B: esquina) === */
+.wmPreview {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.wmPreview img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* overlay */
+.wmOverlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 12px; /* ajusta si tus cards usan otro radius */
+}
+
+.wmOverlayCenter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+}
+
+
+/* “badge” sutil */
+.wmBadge {
+  padding: 8px 10px;
+  border-radius: 10px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  background: rgba(255, 255, 255, 0.55); /* se adapta a fondos */
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  opacity: 0.78; /* suavidad */
+  line-height: 1;
+  display: inline-flex;
+  gap: 4px;
+}
+
+/* tipografía similar a tu marca */
+.wmBrand {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  color: #0B1220;
+}
+
+.wmPremium {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 18px;
+  color: #B08D57;
+}
+
+/* caption abajo (opcional, puedes quitarlo si no lo quieres) */
+.wmCaption {
+  margin-top: 8px;
+  font-size: 12px;
+  opacity: 0.7;
+  text-align: center;
+}
+
+.dark .wmBadge {
+  background: rgba(0, 0, 0, 0.38);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.dark .wmBrand {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.wmCaptionOverlay {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  text-align: center;
+  line-height: 1.2;
+  pointer-events: none;
+
+  /* fondo suave que funciona en claro y oscuro */
+  background: rgba(255, 255, 255, 0.70);
+  border: 1px solid rgba(0,0,0,0.06);
+  color: rgba(10, 16, 32, 0.75);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.dark .wmCaptionOverlay {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.80);
+}

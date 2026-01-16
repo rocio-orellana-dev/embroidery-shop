@@ -1,4 +1,3 @@
-import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,9 +26,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <Navbar />
-      
+    <div className="min-h-screen bg-background flex flex-col">      
       <div className="flex-1 flex items-center justify-center p-4">
         <motion.div 
           layout
@@ -39,18 +36,18 @@ export default function Login() {
         >
           <div className="text-center mb-8">
             <h1 className="font-display text-3xl font-bold mb-2">
-              {isLogin ? "Welcome Back" : "Join Bordados"}
+              {isLogin ? "Bienvenido de vuelta" : "Únete a Bordados"}
             </h1>
             <p className="text-muted-foreground text-sm">
               {isLogin 
-                ? "Enter your credentials to access your account" 
-                : "Create an account to start downloading designs"}
+                ? "Ingresa tus credenciales para acceder a tu cuenta" 
+                : "Crea una cuenta para comenzar a descargar diseños"}
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="username">Usuario</Label>
               <Input 
                 id="username" 
                 value={username} 
@@ -62,7 +59,7 @@ export default function Login() {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Contraseña</Label>
               <Input 
                 id="password" 
                 type="password" 
@@ -79,18 +76,18 @@ export default function Login() {
               className="w-full h-11 text-base bg-primary hover:bg-primary/90 text-white"
               disabled={isPending}
             >
-              {isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : (isLogin ? "Sign In" : "Create Account")}
+              {isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : (isLogin ? "Iniciar sesión" : "Crear cuenta")}
             </Button>
           </form>
 
           <div className="mt-8 pt-6 border-t border-border text-center">
              <p className="text-sm text-muted-foreground">
-               {isLogin ? "Don't have an account?" : "Already have an account?"}
+               {isLogin ? "¿No tienes una cuenta?" : "¿Ya tienes una cuenta?"}
                <button 
                  onClick={() => setIsLogin(!isLogin)}
                  className="ml-2 font-medium text-primary hover:underline focus:outline-none"
                >
-                 {isLogin ? "Sign up" : "Log in"}
+                 {isLogin ? "Regístrate" : "Iniciar sesión"}
                </button>
              </p>
           </div>

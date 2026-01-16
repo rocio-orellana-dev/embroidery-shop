@@ -74,12 +74,12 @@ export async function registerRoutes(
     res.json(req.user);
   });
 
-  app.post(api.auth.logout.path, (req, res, next) => {
-    req.logout((err) => {
-      if (err) return next(err);
-      res.sendStatus(200);
-    });
+  app.post(api.cart.addItem.path, async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    const item = await storage.addToCart((req.user as any).id, req.body);
+    res.json(item);
   });
+
 
   app.post(api.auth.register.path, async (req, res) => {
     try {
@@ -137,68 +137,6 @@ export async function registerRoutes(
     await storage.removeFromCart((req.user as any).id, Number(req.params.id));
     res.sendStatus(200);
   });
-
-  // Seed Data
-  if ((await storage.getProducts()).length === 0) {
-    console.log("Seeding data...");
-    const formats = ["JEF", "DST", "PES", "XXX", "EXP"];
-    
-    await storage.createProduct({
-      name: "Floral Monogram Set",
-      description: "Elegant floral monogram set for embroidery. Includes all 26 letters.",
-      price: 2999, // $29.99
-      tier: "PREMIUM",
-      category: "Monograms",
-      imageUrl: "https://images.unsplash.com/photo-1628147668582-74892c57f722?auto=format&fit=crop&q=80&w=800",
-      isNew: true,
-      isFeatured: true,
-      formats: formats
-    });
-
-    await storage.createProduct({
-      name: "Vintage Rose Collection",
-      description: "A collection of 10 vintage rose patterns.",
-      price: 1999,
-      tier: "PRO",
-      category: "Floral",
-      imageUrl: "https://images.unsplash.com/photo-1595166687406-03da57095f32?auto=format&fit=crop&q=80&w=800",
-      isBestseller: true,
-      formats: formats.slice(0, 3)
-    });
-
-    await storage.createProduct({
-      name: "Geometric Animals",
-      description: "Modern geometric animal designs.",
-      price: 1499,
-      tier: "STANDARD",
-      category: "Modern",
-      imageUrl: "https://images.unsplash.com/photo-1628147668873-197607593259?auto=format&fit=crop&q=80&w=800",
-      formats: ["DST", "PES"]
-    });
-
-     await storage.createProduct({
-      name: "Gold Thread Ornaments",
-      description: "Luxury gold thread ornament designs for high-end textiles.",
-      price: 4999,
-      tier: "PREMIUM",
-      category: "Ornaments",
-      imageUrl: "https://images.unsplash.com/photo-1616686154563-54941324734b?auto=format&fit=crop&q=80&w=800",
-      isFeatured: true,
-      formats: formats
-    });
-
-    await storage.createProduct({
-      name: "Baby Animal Patches",
-      description: "Cute baby animal patches perfect for children's clothing.",
-      price: 1299,
-      tier: "STANDARD",
-      category: "Kids",
-      imageUrl: "https://images.unsplash.com/photo-1549448834-e4c70d4c1851?auto=format&fit=crop&q=80&w=800",
-      formats: ["PES", "JEF"]
-    });
-
-    console.log("Seeding complete.");
-  }
 
   return httpServer;
 }

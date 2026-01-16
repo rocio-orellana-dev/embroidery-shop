@@ -1,6 +1,16 @@
-import { users, products, productFormats, cartItems, type User, type InsertUser, type Product, type InsertProduct, type CartItem, type InsertCartItem, type ProductFormat } from "@shared/schema";
+import {
+  users,
+  products,
+  productFormats,
+  cartItems,
+  type User,
+  type InsertUser,
+  type Product,
+  type InsertProduct,
+  type CartItem,
+} from "@shared/schema";
 import { db } from "./db";
-import { eq, like, desc, asc, and, sql } from "drizzle-orm";
+import { eq, like, and, sql } from "drizzle-orm";
 
 export interface IStorage {
   // User
@@ -15,7 +25,7 @@ export interface IStorage {
 
   // Cart
   getCart(userId: number): Promise<(CartItem & { product: Product })[]>;
-  addToCart(userId: number, item: { productId: number; quantity: number }): Promise<CartItem>;
+  addToCart(userId: number, item: { productId: number; quantity: number; format: string }): Promise<CartItem>;
   removeFromCart(userId: number, id: number): Promise<void>;
   clearCart(userId: number): Promise<void>;
 }
@@ -36,59 +46,63 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
-  async getProducts(filters?: { search?: string; category?: string; sort?: string }): Promise<(Product & { formats: string[] })[]> {
-    let query = db.select({
-      product: products,
-      formats: sql<string[]>`array_agg(${productFormats.format})`,
-    })
-    .from(products)
-    .leftJoin(productFormats, eq(products.id, productFormats.productId))
-    .groupBy(products.id);
+  async getProducts(filters?: { search?: string; category?: string; sort?: string }) {
+    const conditions = [];
 
-    if (filters?.search) {
-      query.where(like(products.name, `%${filters.search}%`));
+    if (filters?.search?.trim()) {
+      conditions.push(like(products.name, `%${filters.search.trim()}%`));
     }
-    
+
     if (filters?.category) {
-      query.where(eq(products.category, filters.category));
+      conditions.push(eq(products.category, filters.category));
     }
 
-    // Sorting logic would apply here but Drizzle's dynamic order by is tricky with complex queries. 
-    // We'll sort in memory for simplicity or apply simple ordering.
-    // Ideally: .orderBy(...)
-    
-    const results = await query;
-    
+    // ✅ si no hay filtros, usamos TRUE para no romper .where()
+    const whereClause = conditions.length ? and(...conditions) : sql`true`;
+
+    const results = await db
+      .select({
+        product: products,
+        formats: sql<string[]>`array_agg(${productFormats.format})`,
+      })
+      .from(products)
+      .leftJoin(productFormats, eq(products.id, productFormats.productId))
+      .where(whereClause)
+      .groupBy(products.id);
+
     let mapped = results.map(({ product, formats }) => ({
       ...product,
-      formats: formats || []
+      formats: formats || [],
     }));
 
+    // sorting (igual que antes)
     if (filters?.sort) {
-       if (filters.sort === 'price_asc') mapped.sort((a, b) => a.price - b.price);
-       if (filters.sort === 'price_desc') mapped.sort((a, b) => b.price - a.price);
-       if (filters.sort === 'new') mapped.sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0));
-       if (filters.sort === 'bestseller') mapped.sort((a, b) => (b.isBestseller ? 1 : 0) - (a.isBestseller ? 1 : 0));
+      if (filters.sort === "price_asc") mapped.sort((a, b) => a.price - b.price);
+      if (filters.sort === "price_desc") mapped.sort((a, b) => b.price - a.price);
+      if (filters.sort === "new") mapped.sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0));
+      if (filters.sort === "bestseller") mapped.sort((a, b) => (b.isBestseller ? 1 : 0) - (a.isBestseller ? 1 : 0));
     }
 
     return mapped;
   }
 
+
   async getProduct(id: number): Promise<(Product & { formats: string[] }) | undefined> {
-    const [result] = await db.select({
-      product: products,
-      formats: sql<string[]>`array_agg(${productFormats.format})`,
-    })
-    .from(products)
-    .leftJoin(productFormats, eq(products.id, productFormats.productId))
-    .where(eq(products.id, id))
-    .groupBy(products.id);
+    const [result] = await db
+      .select({
+        product: products,
+        formats: sql<string[]>`array_agg(${productFormats.format})`,
+      })
+      .from(products)
+      .leftJoin(productFormats, eq(products.id, productFormats.productId))
+      .where(eq(products.id, id))
+      .groupBy(products.id);
 
     if (!result) return undefined;
-    
+
     return {
       ...result.product,
-      formats: result.formats || []
+      formats: result.formats || [],
     };
   }
 
@@ -97,42 +111,53 @@ export class DatabaseStorage implements IStorage {
     const [product] = await db.insert(products).values(productData).returning();
 
     if (formats && formats.length > 0) {
-      await db.insert(productFormats).values(
-        formats.map(f => ({ productId: product.id, format: f }))
-      );
+      await db.insert(productFormats).values(formats.map((f) => ({ productId: product.id, format: f })));
     }
+
     return product;
   }
 
   async getCart(userId: number): Promise<(CartItem & { product: Product })[]> {
-    const items = await db.select({
-      cartItem: cartItems,
-      product: products,
-    })
-    .from(cartItems)
-    .innerJoin(products, eq(cartItems.productId, products.id))
-    .where(eq(cartItems.userId, userId));
+    const items = await db
+      .select({
+        cartItem: cartItems,
+        product: products,
+      })
+      .from(cartItems)
+      .innerJoin(products, eq(cartItems.productId, products.id))
+      .where(eq(cartItems.userId, userId));
 
     return items.map(({ cartItem, product }) => ({ ...cartItem, product }));
   }
 
-  async addToCart(userId: number, item: { productId: number; quantity: number }): Promise<CartItem> {
-    // Check if item exists
-    const [existing] = await db.select()
+  async addToCart(userId: number, item: { productId: number; quantity: number; format: string }): Promise<CartItem> {
+    const fmt = (item.format || "JEF").toUpperCase();
+
+    const [existing] = await db
+      .select()
       .from(cartItems)
-      .where(and(eq(cartItems.userId, userId), eq(cartItems.productId, item.productId)));
+      .where(
+        and(
+          eq(cartItems.userId, userId),
+          eq(cartItems.productId, item.productId),
+          eq(cartItems.format, fmt)
+        )
+      );
 
     if (existing) {
-      const [updated] = await db.update(cartItems)
-        .set({ quantity: (existing.quantity || 1) + item.quantity })
+      const [updated] = await db
+        .update(cartItems)
+        .set({ quantity: (existing.quantity || 1) + (item.quantity || 1) })
         .where(eq(cartItems.id, existing.id))
         .returning();
       return updated;
     }
 
-    const [newItem] = await db.insert(cartItems)
-      .values({ userId, ...item })
+    const [newItem] = await db
+      .insert(cartItems)
+      .values({ userId, productId: item.productId, quantity: item.quantity || 1, format: fmt })
       .returning();
+
     return newItem;
   }
 

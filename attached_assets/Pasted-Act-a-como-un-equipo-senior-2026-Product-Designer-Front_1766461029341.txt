@@ -1,0 +1,108 @@
+Actúa como un equipo senior 2026 (Product Designer + Frontend Engineer + Backend Engineer) y construye una app FULLSTACK llamada “Bordados Premium” para vender matrices de bordado digital (archivos descargables). Quiero un resultado MUY profesional, elegante, premium y distinto a las tiendas típicas. Todo el texto debe estar en español y actualizado a 2026 (copyright 2026, wording moderno).
+
+STACK OBLIGATORIO:
+- Next.js App Router (v14+ o v15 si está disponible en Replit)
+- TypeScript
+- TailwindCSS
+- Prisma + PostgreSQL
+- NextAuth (Credentials) con sesión
+- Arquitectura limpia (components, lib, app routes)
+- UI responsive + accesible (aria-labels, focus rings)
+- Sin dependencias raras innecesarias
+
+ESTILO VISUAL (2026):
+- Minimalista premium tipo editorial: mucho aire, tipografía elegante, botones suaves, sombras sutiles.
+- Paleta: navy profundo + dorado suave + blancos cálidos.
+- Componentes con bordes finos, radios amplios, microinteracciones (hover, focus).
+- Layout consistente: header sticky, contenedor max-w-7xl, padding responsivo.
+- Usa skeleton loaders y estados vacíos bien diseñados.
+- Todo debe verse “SaaS premium”, no plantilla básica.
+
+FUNCIONALIDADES CORE:
+1) HOME
+- Hero editorial con CTA principal “Explorar catálogo” y CTA secundaria “Servicio a pedido”
+- Sección de beneficios (Calidad premium, Licencia comercial, Descarga inmediata)
+- Sección “Destacados” (máx 8 productos) con tarjetas premium
+- Sección categorías con cards
+- Footer profesional (2026)
+
+2) NAVBAR (premium)
+- Logo dominante (Bordados Premium) + links: Catálogo, A pedido, Ayuda
+- Buscador con Ctrl+K: abre un modal tipo spotlight para buscar productos (mock si es necesario)
+- Ícono carrito con contador
+- Botón Iniciar sesión / Mi cuenta si hay sesión
+- Responsive: menú mobile elegante, nada apretado
+
+3) CATÁLOGO /shop (MUY IMPORTANTE)
+- Página con encabezado “Explora diseños”
+- Barra de filtros premium:
+  - búsqueda (q)
+  - categoría (category)
+  - orden (sort: destacados, nuevos, más vendidos, precio asc/desc)
+  - formato (format: JEF/DST/PES/…)
+  - botón “Limpiar filtros”
+- Debe funcionar con query params (server component) y el cambio de filtros debe actualizar la URL.
+- IMPORTANTE: no pasar event handlers desde server components. Si hay interactividad (onChange), crea un Client Component separado (FilterBarClient) que use useRouter y actualice searchParams.
+- Grid de productos con ProductCard PRO (incluye badges, rating mock, formatos)
+- Paginación (page=1..n) con UI bonita.
+
+4) PRODUCT CARD PRO
+- Imagen con hover, sombra suave
+- Badges: “Nuevo”, “Bestseller”, “Destacado” (según campos Prisma)
+- Rating mock (ej: 4.8 ★) + “(120)” como mock
+- Chips de formatos (JEF/DST/PES…) contando hasta 3 y “+2”
+- Precio desde (min de variantes)
+- Botón “Ver detalle” o click en la card
+
+5) PRODUCT DETAIL /shop/[slug]
+- Galería/imagen hero + tabla técnica:
+  - formatos disponibles
+  - tamaño aro
+  - puntadas
+  - colores
+- Selector de variante (formato + aro) y precio
+- Botón “Agregar al carrito”
+- Bloque “Licencia y uso” (muy claro)
+- Bloque “Qué incluye” (ZIP + PDF + guía)
+- Productos relacionados (misma categoría)
+
+6) CARRITO /cart
+- Lista items, cantidad, subtotal, botón checkout
+- Empty state elegante
+
+7) CHECKOUT (mock pago)
+- Crear orden y simular pago (DEV_MOCK)
+- Generar tokens de descarga por orden
+- Página “Gracias” con botón “Ir a descargas”
+
+8) CUENTA /account
+- Pedidos, estado, enlaces de descarga válidos
+- Descargas con expiración y contador
+- UI tipo “biblioteca”
+
+9) AUTH /login
+- Login premium centrado, card elegante, mensaje de error bonito
+- Credenciales demo visibles en un bloque discreto
+
+PRISMA (IMPORTANTE):
+- Debe existir en Product: featured (Boolean), isNew (Boolean), bestseller (Boolean)
+- ProductVariant: format como enum EmbFormat (JEF, DST, PES, etc.)
+- Cart y CartItem implementados
+- DownloadToken + DownloadTokenItem para múltiples archivos por token
+- Relación User-Order, Order-OrderItem, Payment
+- Debe compilar y migrar sin errores (sin líneas sueltas en schema)
+- Proveer seed simple con 8-12 productos, con variantes y categorías para ver el catálogo lleno.
+
+REQUISITOS DE CALIDAD:
+- No debe haber errores de compilación.
+- No debe haber CSS roto ni imports de rutas incorrectas.
+- Colocar globals.css correctamente solo en el layout raíz /app/layout.tsx y no duplicarlo en layouts internos.
+- En /shop/layout.tsx NO importes ./globals.css; solo usa el layout global.
+- Si aparece error “Event handlers cannot be passed…”, separa server/client components.
+
+ENTREGABLES:
+- Estructura de carpetas completa
+- Código completo de: prisma/schema.prisma, seed, app layouts, navbar, footer, shop page, product card, filters client, product detail, cart, login.
+- Instrucciones exactas para ejecutar: instalar, migrar, seed, run dev.
+
+Empieza generando la estructura del proyecto y luego el código archivo por archivo con rutas claras.

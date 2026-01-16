@@ -10,7 +10,7 @@ export function useUser() {
     queryFn: async () => {
       const res = await fetch(api.auth.me.path, { credentials: "include" });
       if (res.status === 401) return null;
-      if (!res.ok) throw new Error("Failed to fetch user");
+      if (!res.ok) throw new Error("Error al obtener el usuario");
       return api.auth.me.responses[200].parse(await res.json()) as User | null;
     },
     retry: false,
@@ -32,18 +32,18 @@ export function useLogin() {
       });
 
       if (!res.ok) {
-        if (res.status === 401) throw new Error("Invalid username or password");
-        throw new Error("Login failed");
+        if (res.status === 401) throw new Error("Usuario o contraseña incorrectos");
+        throw new Error("Error en el inicio de sesión");
       }
       return await res.json();
     },
     onSuccess: (user) => {
       queryClient.setQueryData([api.auth.me.path], user);
-      toast({ title: "Welcome back!", description: `Logged in as ${user.username}` });
+      toast({ title: "¡Bienvenido de nuevo!", description: `Sesión iniciada como ${user.username}` });
       setLocation("/");
     },
     onError: (error: Error) => {
-      toast({ title: "Login failed", description: error.message, variant: "destructive" });
+      toast({ title: "Error de inicio de sesión", description: error.message, variant: "destructive" });
     },
   });
 }
@@ -59,12 +59,12 @@ export function useLogout() {
         method: api.auth.logout.method,
         credentials: "include",
       });
-      if (!res.ok) throw new Error("Logout failed");
+      if (!res.ok) throw new Error("Error al cerrar sesión");
     },
     onSuccess: () => {
       queryClient.setQueryData([api.auth.me.path], null);
-      queryClient.setQueryData([api.cart.get.path], null); // Clear cart cache
-      toast({ title: "Logged out", description: "See you soon!" });
+      queryClient.setQueryData([api.cart.get.path], null); // Limpiar caché del carrito
+      toast({ title: "Sesión cerrada", description: "¡Hasta pronto!" });
       setLocation("/login");
     },
   });
@@ -87,14 +87,14 @@ export function useRegister() {
       if (!res.ok) {
         if (res.status === 400) {
           const error = await res.json();
-          throw new Error(error.message || "Registration failed");
+          throw new Error(error.message || "Error en el registro");
         }
-        throw new Error("Registration failed");
+        throw new Error("Error en el registro");
       }
       return await res.json();
     },
     onSuccess: () => {
-      toast({ title: "Account created", description: "Please login with your new account" });
+      toast({ title: "Cuenta creada", description: "Por favor, inicia sesión con tu nueva cuenta" });
       setLocation("/login");
     },
     onError: (error: Error) => {

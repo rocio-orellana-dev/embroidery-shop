@@ -1,4 +1,4 @@
-import { Navbar } from "@/components/Navbar";
+
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { ArrowRight, Star, ShieldCheck, Truck } from "lucide-react";
@@ -11,7 +11,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Navbar />
       
       {/* Hero Section */}
       <section className="relative overflow-hidden py-20 lg:py-32">
@@ -25,22 +24,22 @@ export default function Home() {
               transition={{ duration: 0.6 }}
             >
               <h1 className="font-display text-5xl lg:text-7xl font-bold leading-tight mb-6">
-                Elevate your <br/>
-                <span className="text-gold-gradient">Embroidery</span> Art.
+                Eleva tu arte de <br/>
+                <span className="text-gold-gradient">bordado</span>.
               </h1>
               <p className="text-xl text-muted-foreground mb-8 max-w-lg leading-relaxed">
-                Premium digital embroidery patterns for professionals. 
-                Optimized for JEF, DST, PES and more. Immediate download.
+                Patrones digitales de bordado premium para profesionales.
+                Optimizados para JEF, DST, PES y más. Descarga inmediata.
               </p>
               <div className="flex gap-4">
                 <Link href="/shop">
                   <Button size="lg" className="rounded-full px-8 bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/25">
-                    Explore Collection
+                    Explorar catálogo
                   </Button>
                 </Link>
                 <Link href="/about">
                   <Button variant="outline" size="lg" className="rounded-full px-8 border-primary/20 hover:bg-primary/5">
-                    Our Quality
+                    Nuestra calidad
                   </Button>
                 </Link>
               </div>
@@ -74,8 +73,8 @@ export default function Home() {
                 <Star className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="font-semibold">Premium Quality</h3>
-                <p className="text-sm text-muted-foreground">Manually digitized, tested patterns.</p>
+                <h3 className="font-semibold">Calidad Premium</h3>
+                <p className="text-sm text-muted-foreground">Patrones digitalizados y probados manualmente.</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
@@ -83,8 +82,8 @@ export default function Home() {
                 <ShieldCheck className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="font-semibold">Commercial License</h3>
-                <p className="text-sm text-muted-foreground">Included with every PRO purchase.</p>
+                <h3 className="font-semibold">Licencia comercial</h3>
+                <p className="text-sm text-muted-foreground">Incluida con cada compra PRO.</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
@@ -92,8 +91,8 @@ export default function Home() {
                 <Truck className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="font-semibold">Instant Download</h3>
-                <p className="text-sm text-muted-foreground">Access your files immediately.</p>
+                <h3 className="font-semibold">Descarga inmediata</h3>
+                <p className="text-sm text-muted-foreground">Accede a tus archivos al instante.</p>
               </div>
             </div>
           </div>
@@ -105,12 +104,12 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-end mb-12">
             <div>
-              <h2 className="text-3xl font-display font-bold mb-2">Featured Designs</h2>
-              <p className="text-muted-foreground">Hand-picked selections for this season.</p>
+              <h2 className="text-3xl font-display font-bold mb-2">Diseños destacados</h2>
+              <p className="text-muted-foreground">Selecciones seleccionadas manualmente para esta temporada.</p>
             </div>
             <Link href="/shop">
               <Button variant="ghost" className="group text-primary hover:text-primary/80">
-                View All <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                Ver todo <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
           </div>
@@ -135,28 +134,28 @@ export default function Home() {
                 Bordados<span className="text-primary italic">.Premium</span>
               </h3>
               <p className="text-gray-400 max-w-sm">
-                Elevating the art of machine embroidery with professional-grade digital patterns for creators worldwide.
+                Elevando el arte del bordado a máquina con patrones digitales de nivel profesional para creadores en todo el mundo.
               </p>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Shop</h4>
+              <h4 className="font-semibold mb-4">Tienda</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><Link href="/shop?category=Floral" className="hover:text-primary transition-colors">Floral</Link></li>
+                <li><Link href="/shop?category=Florales" className="hover:text-primary transition-colors">Floral</Link></li>
                 <li><Link href="/shop?category=Logos" className="hover:text-primary transition-colors">Logos</Link></li>
-                <li><Link href="/shop?category=Monograms" className="hover:text-primary transition-colors">Monograms</Link></li>
+                <li><Link href="/shop?category=Monogramas" className="hover:text-primary transition-colors">Monograms</Link></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Support</h4>
+              <h4 className="font-semibold mb-4">Soporte</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><Link href="/about" className="hover:text-primary transition-colors">Contact Us</Link></li>
-                <li><Link href="/faq" className="hover:text-primary transition-colors">FAQ</Link></li>
-                <li><Link href="/license" className="hover:text-primary transition-colors">License Info</Link></li>
+                <li><Link href="/about" className="hover:text-primary transition-colors">Contáctanos</Link></li>
+                <li><Link href="/faq" className="hover:text-primary transition-colors">Preguntas frecuentes</Link></li>
+                <li><Link href="/license" className="hover:text-primary transition-colors">Información de licencia</Link></li>
               </ul>
             </div>
           </div>
           <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-500 text-sm">
-            © 2024 Bordados Premium. All rights reserved.
+            © 2026 Bordados Premium. Todos los derechos reservados.
           </div>
         </div>
       </footer>

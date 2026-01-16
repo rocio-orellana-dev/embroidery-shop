@@ -24,9 +24,9 @@ export function Navbar() {
   const cartCount = cart?.reduce((acc, item) => acc + (item.quantity || 1), 0) || 0;
 
   const links = [
-    { href: "/", label: "Home" },
-    { href: "/shop", label: "Collection" },
-    { href: "/about", label: "About" },
+    { href: "/", label: "Inicio" },
+    { href: "/shop", label: "Catálogo" },
+    { href: "/about", label: "Acerca de" },
   ];
 
   return (
@@ -54,7 +54,7 @@ export function Navbar() {
             ))}
           </div>
 
-          {/* Right Actions */}
+          {/* Acciones Derecha */}
           <div className="hidden md:flex items-center space-x-6">
             <Link href="/shop" className="text-muted-foreground hover:text-primary transition-colors cursor-pointer">
               <Search className="w-5 h-5" />
@@ -80,26 +80,26 @@ export function Navbar() {
                   <DropdownMenuLabel>
                     <div className="flex flex-col space-y-1">
                       <p className="text-sm font-medium leading-none">{user.username}</p>
-                      <p className="text-xs leading-none text-muted-foreground">Premium Member</p>
+                      <p className="text-xs leading-none text-muted-foreground">Miembro Premium</p>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => logout()} className="text-red-600 focus:text-red-600 cursor-pointer">
                     <LogOut className="mr-2 h-4 w-4" />
-                    <span>Log out</span>
+                    <span>Cerrar sesión</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
               <Link href="/login">
                 <Button variant="outline" size="sm" className="border-primary/20 hover:border-primary/50 text-foreground">
-                  Sign In
+                  Iniciar sesión
                 </Button>
               </Link>
             )}
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Botón Menú Móvil */}
           <div className="md:hidden flex items-center">
              <Link href="/cart" className="mr-4 relative text-muted-foreground hover:text-primary transition-colors">
               <ShoppingBag className="w-5 h-5" />
@@ -119,7 +119,7 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Menú Móvil */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -145,13 +145,13 @@ export function Navbar() {
               {!user && (
                 <Link href="/login">
                   <Button className="w-full mt-4 bg-primary text-primary-foreground">
-                    Sign In
+                    Iniciar sesión
                   </Button>
                 </Link>
               )}
               {user && (
                  <Button variant="ghost" className="w-full mt-4 justify-start text-red-500" onClick={() => logout()}>
-                    <LogOut className="mr-2 h-4 w-4" /> Sign Out
+                    <LogOut className="mr-2 h-4 w-4" /> Cerrar sesión
                   </Button>
               )}
             </div>
